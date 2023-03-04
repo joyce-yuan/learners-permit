@@ -11,7 +11,7 @@ from car_game_with_screens import CarGame as CreateDataMode
 
 from typing import Tuple, Any
 
-surface = create_example_window('Example - Simple', (700, 600))
+surface = create_example_window('Example - Simple', (900, 600))
 
 
 def set_difficulty(selected: Tuple, value: Any) -> None:
