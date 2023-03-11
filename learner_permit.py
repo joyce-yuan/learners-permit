@@ -3,8 +3,9 @@ import sys
 import pygame_menu
 from pygame_menu.examples import create_example_window
 from car_game import CarGame as GameMode
-from car_game_setting_scene import CarGame as InspectDataMode
-from car_game_with_screens import CarGame as CreateDataMode
+from car_game_playback_mode import CarGame as PlaybackMode
+from car_game_generate_mode import CarGame as GenerateMode
+from os import listdir
 
 
 ### Trial 2 from https://pygame-menu.readthedocs.io/en/4.2.8/
@@ -41,17 +42,88 @@ def game_mode() -> None:
 
 def inspect_data() -> None:
     """
+    takes in a csv file as data
+    steps through each of the data points
     """
+    # def find_csv_filenames( path_to_dir, suffix=".csv" ):
+    #     filenames = listdir(path_to_dir)
+    #     return [ filename for filename in filenames if filename.endswith( suffix ) ]
+    
+    # find csv filename
 
-    print("Inspect data")
-    play(InspectDataMode())
+    path_to_dir = './data/'
+    all_files = listdir(path_to_dir)
+    csv_files = [ filename for filename in all_files if filename.endswith(".csv")]
+
+    print("Inspect / Playback data")
+    data_menu = pygame_menu.Menu(
+        height=300,
+        theme=pygame_menu.themes.THEME_BLUE,
+        title='Choose Data Set',
+        width=400
+    )
+
+    global input_file
+    input_file = ''
+
+    def set_data(filename):
+        global input_file
+        input_file = filename
+        print(input_file)
+
+    for index, filename in enumerate(csv_files):
+        data_menu.add.button(f'File {index+1}', set_data, filename)
+
+    # chooseDataMenu.draw(surface)
+
+    while input_file == '':
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                exit()
+        data_menu.update(events)
+        data_menu.draw(surface)
+        pygame.display.update()
+        # print(input_file)
+
+    print(input_file)
+    play(PlaybackMode())
 
 def generate_data() -> None:
     """
+    user can play with the playground screen to drag and drop cars
+    then the car game runs and shows the outcome
     """
 
     print("Generate data")
-    play(CreateDataMode())
+
+    global loop
+    loop = True
+    def end_loop():
+        global loop
+        loop = False
+
+    input_menu = pygame_menu.Menu(
+        height=300,
+        theme=pygame_menu.themes.THEME_BLUE,
+        title='Create Clip Name',
+        width=400
+    )
+
+    clip_name = input_menu.add.text_input('', default='Clip 1', maxchar=20)
+    input_menu.add.button(f'Confirm', end_loop)
+
+    while loop:
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                exit()
+        input_menu.update(events)
+        input_menu.draw(surface)
+        pygame.display.update()
+
+    print(clip_name)
+    play(GenerateMode())
 
 def play(game):
     #Game loop
@@ -71,8 +143,8 @@ menu = pygame_menu.Menu(
 
 user_name = menu.add.text_input('Name: ', default='John Doe', maxchar=10)
 menu.add.button('Game Mode', game_mode)
-menu.add.button('Inspect Data', inspect_data)
-menu.add.button('Generate Data', generate_data)
+menu.add.button('Playback Mode', inspect_data)
+menu.add.button('Generate Mode', generate_data)
 # menu.add.selector('Difficulty: ', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
 # menu.add.button('Play', start_the_game)
 menu.add.button('Quit', pygame_menu.events.EXIT)

@@ -61,9 +61,10 @@ class Car:
         self.x = x
         self.y = y
         self.speed = speed
+        self.dragging = False
 
 class CarGame:
-    def __init__(self,w=700,h=600):
+    def __init__(self,w=900,h=600):
         self.w=w
         self.h=h
         #init display
@@ -126,7 +127,8 @@ class CarGame:
 
 
     def play_step(self):
-        
+        cars = [self.main, self.car1, self.car2]
+
         # 1. Collect the user input
         for event in pygame.event.get():
             if(event.type == pygame.QUIT):
@@ -139,7 +141,21 @@ class CarGame:
                     if (event.key == pygame.K_RIGHT):
                         temp = []
                         for box in self.input_boxes:
-                            temp.append(int(box.text))
+                            if box.text:
+                                temp.append(int(box.text))
+                            
+                            #hack
+                            else:
+                                print("apending default value")
+                                temp.append(0)
+
+                        # hack for adding drag and drop functionality
+                        # instead of changing the input, I will change the actual values before set scene
+                        # TODO: actually fix set scene to be more versatile
+                        temp[0] = self.main.y
+                        temp[2] = self.car1.y
+                        temp[4] = self.car2.y
+
                         self._set_scene(temp[0],temp[1],temp[2],temp[3],temp[4],temp[5])
                         pygame.time.wait(500)
             # if(event.type == pygame.KEYDOWN):
@@ -150,6 +166,20 @@ class CarGame:
                 if pygame.mouse.get_pressed()[0]:
                     if self.quit_button.collidepoint(x, y):
                         self.end_game()
+
+            # drag and drop logic
+                if event.button == 1: 
+                    for car in cars:
+                        if pygame.Rect(car.x, car.y, CAR_LEN , CAR_WID).collidepoint(event.pos):
+                            car.dragging = True
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:   
+                    for car in cars:         
+                        car.dragging = False
+            elif event.type == pygame.MOUSEMOTION:
+                for car in cars:
+                    if car.dragging:
+                        car.x, car.y = event.pos
                     
             #     if (event.key == pygame.K_RIGHT):
             #         self.record()
@@ -171,6 +201,7 @@ class CarGame:
             #     self.direction = Direction.NONE
         self.direction = self._passing()
         # 2. Move
+
         if not self.pause:
             self._move(self.direction)
         # self.snake.insert(0,self.head)
@@ -227,8 +258,11 @@ class CarGame:
         for i in range(len(stats)):
             self.display.blit(stats[i], [0, 20*i + 25])
 
-        for box in self.input_boxes:
-            box.draw(self.display)
+        for index, box in enumerate(self.input_boxes):
+            #hack for velocity input
+            #TODO: fix this
+            if index % 2 == 1:
+                box.draw(self.display)
         pygame.display.flip()
 
     def end_game(self):

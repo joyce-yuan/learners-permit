@@ -59,7 +59,7 @@ class Car:
         self.speed = speed
 
 class CarGame:
-    def __init__(self,w=300,h=600):
+    def __init__(self,read_file,w=900,h=600):
         self.w=w
         self.h=h
         #init display
@@ -132,22 +132,12 @@ class CarGame:
                 if pygame.mouse.get_pressed()[0]:
                     if self.quit_button.collidepoint(x, y):
                         self.end_game()
-            # if(event.type == pygame.KEYDOWN):
-            #     if(event.key == pygame.K_LEFT):
-            #         self.direction = Direction.LEFT
-            #     elif(event.key == pygame.K_RIGHT):
-            #         self.direction = Direction.RIGHT
-            #     elif(event.key == pygame.K_UP):
-            #         self.direction = Direction.UP
-            #     elif(event.key == pygame.K_DOWN):
-            #         self.direction = Direction.DOWN
-            # else:
-            #     self.direction = Direction.NONE
+
         self.direction = self._passing()
+
         # 2. Move
         if not self.pause:
             self._move(self.direction)
-        # self.snake.insert(0,self.head)
 
         # 3. Check if game Over
         # game_over = False 

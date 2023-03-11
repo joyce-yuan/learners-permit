@@ -44,7 +44,7 @@ class Car:
         self.speed = speed
 
 class CarGame:
-    def __init__(self,w=700,h=600):
+    def __init__(self,w=900,h=600):
         self.w=w
         self.h=h
         #init display
