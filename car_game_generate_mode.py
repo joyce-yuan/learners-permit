@@ -6,8 +6,8 @@ import csv
 from input import InputBox
 
 pygame.init()
-font_heading = pygame.font.Font(None,25)
-font_text = pygame.font.Font(None,15)
+font_heading = pygame.font.Font('arial/arial.ttf',25)
+font_text = pygame.font.Font('arial/arial.ttf',15)
 
 # Reset 
 # Reward
@@ -53,6 +53,10 @@ if RECORD:
 
 WRITE_FILE = '11-23-2022-example-3.csv'
 
+# Pause / Play Button
+PAUSE_IMG = pygame.transform.scale(pygame.image.load("./assets/pause.png").convert(), (50, 50))
+PLAY_IMG = pygame.transform.scale(pygame.image.load("./assets/play.png").convert(), (50, 50))
+
 #PASSING
 
 # Car = namedtuple('Car','x , y , speed')
@@ -76,12 +80,13 @@ class CarGame:
         self.direction = Direction.NONE
         self.score = 0
         self.game_over = False
-        self.quit_button = pygame.Rect(600, 500, 50, 20)
+        self.quit_button = pygame.Rect(800, 500, 50, 30)
 
         #timer options
         self.seconds = 0
-        self.pause = False
+        self.pause = False #this will double as play function
         self.success = "None"
+        self.pause_button = pygame.Rect(40, 200, 50, 50)
 
         #labels on the side
         self.labels = ["Main Car Y: ", "Main Car V: ", "Car 1 Y: ", "Car 1 V: ", "Car 2 Y: ", "Car 2 V: "]
@@ -98,7 +103,7 @@ class CarGame:
         if RECORD:
             self.data_index = 1
             temp = DATA[self.data_index]
-            self._set_scene(temp[0],temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],temp[8])\
+            self._set_scene(temp[0],temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],temp[8])
             
         #setting up the write file
         self.WRITE_FILE = write_file
@@ -135,36 +140,36 @@ class CarGame:
             if self.pause:
                 for box in self.input_boxes:
                     box.handle_event(event)
-                if (event.type == pygame.KEYDOWN):
-                    if (event.key == pygame.K_RIGHT):
-                        #TODO: fix logic completely
-                        #record the last pass or fail
-                        temp = '1,\n' if (self.success == "Success") else '0,\n'
-                        self.record(temp)
+                if ((event.type == pygame.KEYDOWN) and (event.key == pygame.K_RIGHT)) or \
+                (event.type == pygame.MOUSEBUTTONDOWN and self.pause_button.collidepoint(pygame.mouse.get_pos())):
+                    #TODO: fix logic completely
+                    #record the last pass or fail
+                    temp = '1,\n' if (self.success == "Success") else '0,\n'
+                    self.record(temp)
 
-                        temp = []
-                        for box in self.input_boxes:
-                            if box.text:
-                                temp.append(int(box.text))
-                            
-                            #hack
-                            else:
-                                print("apending default value")
-                                temp.append(0)
+                    temp = []
+                    for box in self.input_boxes:
+                        if box.text:
+                            temp.append(int(box.text))
+                        
+                        #hack
+                        else:
+                            print("apending default value")
+                            temp.append(0)
 
-                        # hack for adding drag and drop functionality
-                        # instead of changing the input, I will change the actual values before set scene
-                        # TODO: actually fix set scene to be more versatile
-                        temp[0] = self.main.y
-                        temp[2] = self.car1.y
-                        temp[4] = self.car2.y
+                    # hack for adding drag and drop functionality
+                    # instead of changing the input, I will change the actual values before set scene
+                    # TODO: actually fix set scene to be more versatile
+                    temp[0] = self.main.y
+                    temp[2] = self.car1.y
+                    temp[4] = self.car2.y
 
-                        self._set_scene(temp[0],temp[1],temp[2],temp[3],temp[4],temp[5])
-                        self.record(f'{temp[0]},{temp[1]},{temp[2]},{temp[3]},{temp[4]},{temp[5]},')
-                        pygame.time.wait(500)
-            # if(event.type == pygame.KEYDOWN):
-                    if (event.key == pygame.K_SPACE):
-                        self._reset()
+                    self._set_scene(temp[0],temp[1],temp[2],temp[3],temp[4],temp[5])
+                    self.record(f'{temp[0]},{temp[1]},{temp[2]},{temp[3]},{temp[4]},{temp[5]},')
+                    pygame.time.wait(500)
+            if(event.type == pygame.KEYDOWN):
+                if (event.key == pygame.K_SPACE):
+                    self._reset()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
                 if pygame.mouse.get_pressed()[0]:
@@ -249,6 +254,7 @@ class CarGame:
         pygame.draw.rect(self.display, RED, pygame.Rect(self.car1.x, self.car1.y, CAR_LEN, CAR_WID))
         pygame.draw.rect(self.display, RED, pygame.Rect(self.car2.x, self.car2.y, CAR_LEN, CAR_WID))
         pygame.draw.rect(self.display, "pink", self.quit_button)
+        self.display.blit(font_text.render("Menu",True, BLACK), [self.quit_button.x+5, self.quit_button.y+5])
 
         text = font_heading.render("Score: "+str(self.score)+'\n',True,WHITE)
 
@@ -258,9 +264,18 @@ class CarGame:
         font_text.render(f'Status: {self.success}', True, WHITE)
         ]
 
+        cursor = 25
+
         self.display.blit(text,[0,0])
         for i in range(len(stats)):
-            self.display.blit(stats[i], [0, 20*i + 25])
+            self.display.blit(stats[i], [10, cursor])
+            cursor += 20
+
+        # pause and play button
+        self.display.blit(font_heading.render("Play Button", True, WHITE), [10, cursor])
+        cursor += 20
+        temp_button = PLAY_IMG if self.pause else PAUSE_IMG
+        self.display.blit(temp_button, self.pause_button)
 
         for index, box in enumerate(self.input_boxes):
             #hack for velocity input

@@ -72,7 +72,7 @@ class CarGame:
         self.direction = Direction.NONE
         self.score = 0
         self.game_over = False
-        self.quit_button = pygame.Rect(250, 500, 50, 20)
+        self.quit_button = pygame.Rect(800, 500, 50, 30)
 
         #timer options
         self.seconds = 0
@@ -185,6 +185,7 @@ class CarGame:
         pygame.draw.rect(self.display, RED, pygame.Rect(self.car1.x, self.car1.y, CAR_LEN, CAR_WID))
         pygame.draw.rect(self.display, RED, pygame.Rect(self.car2.x, self.car2.y, CAR_LEN, CAR_WID))
         pygame.draw.rect(self.display, "pink", self.quit_button)
+        self.display.blit(font_text.render("Menu",True, BLACK), [self.quit_button.x+5, self.quit_button.y+5])
 
         text = font_heading.render("Score: "+str(self.score)+'\n',True,WHITE)
 

@@ -4,6 +4,8 @@ from enum import Enum
 from collections import namedtuple
 pygame.init()
 font = pygame.font.Font(None, 25)
+font_heading = pygame.font.Font('arial/arial.ttf',25)
+font_text = pygame.font.Font('arial/arial.ttf',15)
 
 from button import Button
 
@@ -60,7 +62,7 @@ class CarGame:
         #               Point(self.head.x-(2*BLOCK_SIZE),self.head.y)]
         self.score = 0
         self.game_over = False
-        self.quit_button = pygame.Rect(600, 500, 50, 20)
+        self.quit_button = pygame.Rect(600, 500, 60, 30)
 
         self._reset()
         # self.food = None
@@ -137,14 +139,15 @@ class CarGame:
         pygame.draw.rect(self.display, RED, pygame.Rect(self.car1.x, self.car1.y, CAR_LEN, CAR_WID))
         pygame.draw.rect(self.display, RED, pygame.Rect(self.car2.x, self.car2.y, CAR_LEN, CAR_WID))
         pygame.draw.rect(self.display, "pink", self.quit_button)
-        # for pt in self.snake:
-        #     pygame.draw.rect(self.display,BLUE1,pygame.Rect(pt.x,pt.y,BLOCK_SIZE,BLOCK_SIZE))
-        #     pygame.draw.rect(self.display,BLUE2,pygame.Rect(pt.x+4,pt.y+4,12,12))
-        # pygame.draw.rect(self.display,RED,pygame.Rect(self.food.x,self.food.y,BLOCK_SIZE,BLOCK_SIZE))
-        text = font.render("Score: "+str(self.score)+'\n',True,WHITE)
+        self.display.blit(font.render("Menu",True, BLACK), [self.quit_button.x+5, self.quit_button.y+5])
+
+        text = font_heading.render("Score: "+str(self.score)+'\n',True,WHITE)
         # text = font.render("Your speed: "+str(self.main.speed) +'\n',True,WHITE,)
         # text = font.render("Other speed: "+str(self.car1.speed)+'\n',True,WHITE)
         self.display.blit(text,[0,0])
+
+        #display instructions
+        self.display.blit(font_text.render("Use arrow keys to navigate your car", True, WHITE), [0,550])
         pygame.display.flip()
 
     def end_game(self):

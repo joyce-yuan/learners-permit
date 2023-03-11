@@ -95,6 +95,7 @@ def generate_data() -> None:
 
     print("Generate data")
 
+    # looping 
     global loop
     loop = True
     def end_loop():
@@ -108,7 +109,7 @@ def generate_data() -> None:
         width=400
     )
 
-    clip_name = input_menu.add.text_input('', default='Clip 1', maxchar=20)
+    clip_name = input_menu.add.text_input('', default='Clip 1', maxchar=20, onreturn=end_loop)
     input_menu.add.button(f'Confirm', end_loop)
 
     while loop:
@@ -123,7 +124,7 @@ def generate_data() -> None:
     # print(clip_name)
 
     path_to_dir = './data/'
-    play(GenerateMode(path_to_dir + str(clip_name)))
+    play(GenerateMode(path_to_dir + str(clip_name.get_value())))
 
 def play(game):
     #Game loop
@@ -137,11 +138,11 @@ def play(game):
 menu = pygame_menu.Menu(
     height=300,
     theme=pygame_menu.themes.THEME_BLUE,
-    title='Car Game',
+    title="Learner's Permit",
     width=400
 )
 
-user_name = menu.add.text_input('Name: ', default='John Doe', maxchar=10)
+user_name = menu.add.text_input('Name: ', default='', maxchar=10)
 menu.add.button('Game Mode', game_mode)
 menu.add.button('Playback Mode', inspect_data)
 menu.add.button('Generate Mode', generate_data)
