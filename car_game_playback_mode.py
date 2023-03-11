@@ -41,6 +41,7 @@ SECONDS_PER_DATA = 15
 RECORD_INTERVAL = 1
 
 #Data stuff
+#Archived
 DATA = []
 with open('car_passing_data-1.csv') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',',quoting = csv.QUOTE_NONNUMERIC)
@@ -79,9 +80,14 @@ class CarGame:
         self.success = "None"
 
         #data index
+        self.data = []
+        with open(read_file) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',',quoting = csv.QUOTE_NONNUMERIC)
+            for row in csv_reader:
+                self.data.append(row)
         self.data_index = 1
 
-        temp = DATA[self.data_index]
+        temp = self.data[self.data_index]
         self._set_scene(temp[0],temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],temp[8])
 
 
@@ -124,7 +130,7 @@ class CarGame:
                 if (event.key == pygame.K_RIGHT):
                     self.record()
                     self.data_index += 1
-                    temp = DATA[self.data_index]
+                    temp = self.data[self.data_index]
                     self._set_scene(temp[0],temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],temp[8])
                     pygame.time.wait(500)
             if event.type == pygame.MOUSEBUTTONDOWN:
