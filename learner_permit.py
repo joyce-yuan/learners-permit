@@ -72,7 +72,7 @@ def inspect_data() -> None:
         print(input_file)
 
     for index, filename in enumerate(csv_files):
-        data_menu.add.button(f'File {index+1}', set_data, filename)
+        data_menu.add.button(filename, set_data, filename)
 
     # chooseDataMenu.draw(surface)
 
@@ -84,10 +84,8 @@ def inspect_data() -> None:
         data_menu.update(events)
         data_menu.draw(surface)
         pygame.display.update()
-        # print(input_file)
 
-    print(input_file)
-    play(PlaybackMode())
+    play(PlaybackMode(path_to_dir + input_file))
 
 def generate_data() -> None:
     """
