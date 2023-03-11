@@ -120,8 +120,10 @@ def generate_data() -> None:
         input_menu.draw(surface)
         pygame.display.update()
 
-    print(clip_name)
-    play(GenerateMode())
+    # print(clip_name)
+
+    path_to_dir = './data/'
+    play(GenerateMode(path_to_dir + str(clip_name)))
 
 def play(game):
     #Game loop

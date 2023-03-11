@@ -64,7 +64,7 @@ class Car:
         self.dragging = False
 
 class CarGame:
-    def __init__(self,w=900,h=600):
+    def __init__(self,write_file,w=900,h=600):
         self.w=w
         self.h=h
         #init display
@@ -98,7 +98,10 @@ class CarGame:
         if RECORD:
             self.data_index = 1
             temp = DATA[self.data_index]
-            self._set_scene(temp[0],temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],temp[8])
+            self._set_scene(temp[0],temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],temp[8])\
+            
+        #setting up the write file
+        self.WRITE_FILE = write_file
 
 
     def _reset(self):
@@ -115,13 +118,8 @@ class CarGame:
         self.pause = False
         self.success = "None"
 
-    def record(self):
-        record_string = ''
-        if self.success == "Passed":
-            record_string = '1,'
-        elif self.success == "Failed":
-            record_string = '0,'
-        with open (WRITE_FILE,"a") as f:
+    def record(self, record_string):
+        with open (self.WRITE_FILE,"a") as f:
                 f.write(record_string) 
         return
 
@@ -139,6 +137,11 @@ class CarGame:
                     box.handle_event(event)
                 if (event.type == pygame.KEYDOWN):
                     if (event.key == pygame.K_RIGHT):
+                        #TODO: fix logic completely
+                        #record the last pass or fail
+                        temp = '1,\n' if (self.success == "Success") else '0,\n'
+                        self.record(temp)
+
                         temp = []
                         for box in self.input_boxes:
                             if box.text:
@@ -157,6 +160,7 @@ class CarGame:
                         temp[4] = self.car2.y
 
                         self._set_scene(temp[0],temp[1],temp[2],temp[3],temp[4],temp[5])
+                        self.record(f'{temp[0]},{temp[1]},{temp[2]},{temp[3]},{temp[4]},{temp[5]},')
                         pygame.time.wait(500)
             # if(event.type == pygame.KEYDOWN):
                     if (event.key == pygame.K_SPACE):
@@ -211,7 +215,7 @@ class CarGame:
             # game_over=True
             # return game_over,self.score
             self.success = "Failed"
-            # self.record()
+            # self.record('0,\n')
             # self.data_index += 1
             # temp = DATA[self.data_index]
             # self._set_scene(temp[0],temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],temp[8])
@@ -220,7 +224,7 @@ class CarGame:
         
         if(self._score()):
             self.success = "Passed"
-            # self.record()
+            # self.record('1,\n')
             # self.data_index += 1
             # temp = DATA[self.data_index]
             # self._set_scene(temp[0],temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],temp[8])
