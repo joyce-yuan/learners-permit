@@ -4,6 +4,15 @@ from enum import Enum
 from collections import namedtuple
 import csv
 from input import InputBox
+import pandas as pd
+import sklearn
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score
+import numpy as np
+import pickle
+
+
 
 pygame.init()
 font_heading = pygame.font.Font('arial/arial.ttf',25)
@@ -53,6 +62,11 @@ if RECORD:
 
 WRITE_FILE = '11-23-2022-example-3.csv'
 
+#Model Machine Learning Stuff
+# load model
+filename = "./models/first.pickle"
+model = pickle.load(open(filename, "rb"))
+
 # Pause / Play Button
 PAUSE_IMG = pygame.transform.scale(pygame.image.load("./assets/pause.png").convert(), (50, 50))
 PLAY_IMG = pygame.transform.scale(pygame.image.load("./assets/play.png").convert(), (50, 50))
@@ -96,6 +110,9 @@ class CarGame:
             input_box = InputBox(500, y, 50, 32, label)
             self.input_boxes.append(input_box)
             y += 70
+
+        #model_prediction
+        self.prediction = None
         
         self._reset()
 
@@ -165,6 +182,10 @@ class CarGame:
                     temp[0] = self.main.y
                     temp[2] = self.car1.y
                     temp[4] = self.car2.y
+
+                    # model makes a prediction here
+                    self.prediction = model.predict(np.array([484, 50, 450.0, 50, 10.0, 40]).reshape(1, -1))
+                    print(f"Model Predicted: {self.prediction}")
 
                     self._set_scene(temp[0],temp[1],temp[2],temp[3],temp[4],temp[5])
                     self.record(f'{temp[0]},{temp[1]},{temp[2]},{temp[3]},{temp[4]},{temp[5]},')
@@ -263,6 +284,7 @@ class CarGame:
         stats = [font_text.render(f'Main Car: {self.main.speed} mph ({self.main.x}, {self.main.y})',True, WHITE),
         font_text.render(f'Car 1: {self.car1.speed} mph ({self.car1.x}, {self.car1.y})', True, WHITE), 
         font_text.render(f'Car 2: {self.car2.speed} mph ({self.car2.x}, {self.car2.y})', True, WHITE), 
+        font_text.render(f'Prediction: {self.prediction}', True, WHITE),
         font_text.render(f'Status: {self.success}', True, WHITE)
         ]
 

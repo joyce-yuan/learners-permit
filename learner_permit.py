@@ -5,6 +5,7 @@ from pygame_menu.examples import create_example_window
 from car_game import CarGame as GameMode
 from car_game_playback_mode import CarGame as PlaybackMode
 from car_game_generate_mode import CarGame as GenerateMode
+from prediction_mode import CarGame as PredictionMode
 from os import listdir
 
 
@@ -126,6 +127,45 @@ def generate_data() -> None:
     path_to_dir = './data/'
     play(GenerateMode(path_to_dir + str(clip_name.get_value())))
 
+def predict_model() -> None:
+    """
+    is the same as generate data, with an addition that our ML model
+    makes a prediction before the car actually runs
+    """
+
+    print("Prediction Mode")
+
+    # looping 
+    global loop
+    loop = True
+    def end_loop():
+        global loop
+        loop = False
+
+    input_menu = pygame_menu.Menu(
+        height=300,
+        theme=pygame_menu.themes.THEME_BLUE,
+        title='Create Clip Name',
+        width=400
+    )
+
+    clip_name = input_menu.add.text_input('', default='clip1.csv', maxchar=20, onreturn=end_loop)
+    input_menu.add.button(f'Confirm', end_loop)
+
+    while loop:
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                exit()
+        input_menu.update(events)
+        input_menu.draw(surface)
+        pygame.display.update()
+
+    # print(clip_name)
+
+    path_to_dir = './data/'
+    play(PredictionMode(path_to_dir + str(clip_name.get_value())))
+
 def play(game):
     #Game loop
     #game_over=False
@@ -146,6 +186,7 @@ user_name = menu.add.text_input('Name: ', default='', maxchar=10)
 menu.add.button('Game Mode', game_mode)
 menu.add.button('Playback Mode', inspect_data)
 menu.add.button('Generate Mode', generate_data)
+menu.add.button('Prediction Mode', predict_model)
 # menu.add.selector('Difficulty: ', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
 # menu.add.button('Play', start_the_game)
 menu.add.button('Quit', pygame_menu.events.EXIT)
