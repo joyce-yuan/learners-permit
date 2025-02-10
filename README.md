@@ -2,11 +2,12 @@
 *an interactive programming game where the player’s objective is to teach a car to drive itself*
 
 ```
-Yuan, J., Lieberman, H., Smith, D.C., Xin, Y. (2025).
-Learner’s Permit: Accessible Artificial Intelligence Through an Educational Game.
-In: Schlippe, T., Cheng, E.C.K., Wang, T. (eds) Artificial Intelligence in Education Technologies:
-New Development and Innovative Practices. AIET 2024. Lecture Notes on Data Engineering and
-Communications Technologies, vol 228. Springer, Singapore. https://doi.org/10.1007/978-981-97-9255-9_32
+Yuan, J., Lieberman, H., Smith, D.C., Xin, Y. (2025). Learner’s Permit:
+Accessible Artificial Intelligence Through an Educational Game. In: Schlippe,
+T., Cheng, E.C.K., Wang, T. (eds) Artificial Intelligence in Education Technologies:
+New Development and Innovative Practices. AIET 2024. Lecture Notes on Data Engineering
+and Communications Technologies, vol 228. Springer, Singapore.
+https://doi.org/10.1007/978-981-97-9255-9_32
 ```
 
 
